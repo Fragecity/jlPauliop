@@ -1,0 +1,4 @@
+name = "myjlib"
+uuid = "da850695-1f1f-4ce1-bb6e-098e5c61ea98"
+authors = ["kaiming <12231295@mail.sustech.edu.cn>"]
+version = "0.1.0"

@@ -1,4 +1,8 @@
-name = "myjlib"
+name = "PauliAlgebras"
 uuid = "da850695-1f1f-4ce1-bb6e-098e5c61ea98"
 authors = ["kaiming <12231295@mail.sustech.edu.cn>"]
 version = "0.1.0"
+
+[deps]
+Yao = "5872b779-8223-5990-8dd0-5abbb0748c8c"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"

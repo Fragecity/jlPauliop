@@ -1,3 +1,4 @@
+using LinearAlgebra
 function mat(paulis::Vector{Pauli})
     return hcat([pauli.bvec for pauli in paulis]...)
 end
@@ -95,7 +96,6 @@ function find_basis(M::BitMatrix)::BitMatrix
         end
     end
     
-    # println(pivot_cols)
 
     non_zero_cols = findall(j -> any(@view M_copy[:, j]), 1:n)
     M_copy = M_copy[:, non_zero_cols]
@@ -106,44 +106,55 @@ function find_basis(M::BitMatrix)::BitMatrix
     k = n - n_cols
     k <= 0 && return M_copy
 
+    r = n_cols
     while k > 0
         # 找到所有pivot_cols为0的索引
         zero_indices = findall(x -> x == 0, pivot_cols)
         isempty(zero_indices) && break  # 如果没有零索引，退出循环
         first_zero_idx = zero_indices[1]
+        # println(zero_indices[2:end])
         
-        indd = powerset(zero_indices[2:end])
+        indd = powerset(zero_indices)
         sort!(indd, by = x -> length(x))
+        indd = indd[2:end]
         # 生成所有可能的组合
-        for combination in powerset(zero_indices[2:end])
+        for combination in indd
             # 创建基础向量，长度为n_rows
             result_vector = falses(n_rows)
             # last_zero_idx必须为true
-            result_vector[first_zero_idx] = true
-        
+            # result_vector[first_zero_idx] = true
+
+
             # 根据当前组合设置其他零索引位置
             for idx in combination
                 result_vector[idx] = true
             end
-            
+
+            if rank(column_echelon(hcat(M_copy, result_vector))) == r
+                continue
+            end
             # 检查result_vector是否与M_copy的所有列都commute
             is_all_commute = true
-            for col in 1:n_cols
+            for col in 1:size(M_copy, 2)
                 if !is_commute(result_vector, M_copy[:, col])
                     is_all_commute = false
                     break
                 end
+                
             end
             
             # 如果都commute，将result_vector添加到M_copy中并终止循环
             if is_all_commute
+                # println(result_vector)
                 M_copy = hcat(M_copy, result_vector)
-                pivot_cols[first_zero_idx] = n-k+1
+                # display(M_copy)
+                # pivot_cols[first_zero_idx] = n-k+1
                 break
             end
         end
         
         k -= 1
+        r += 1
     end
     
     return M_copy

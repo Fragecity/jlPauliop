@@ -84,6 +84,16 @@ function mat(pauli_algebra::PauliAlgebra)
 end
 
 
-# function tailor_palg(palg::PauliAlgebra)
-
-# end
+function shrink(palg::PauliAlgebra)
+    nqubits = palg.nqubits
+    terms = palg.terms
+    
+    for (name, val) in terms
+        if isapprox(val, 0f0, atol=5e-10)
+            delete!(terms, name)
+        end
+    end
+    bvecs_dict = Dict{String, BitVector}(term => bvec for (term, bvec) in palg.bvecs_dict)
+    
+    return PauliAlgebra(nqubits, terms, bvecs_dict)
+end

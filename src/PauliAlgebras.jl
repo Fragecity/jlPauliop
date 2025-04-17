@@ -17,7 +17,9 @@ PauliAlgebra, rand_pauli_algebra, tomography,
 # PauliGroup and its operations
 find_basis, column_echelon,
 # Pauli Linear Algebra
-norm2
+norm2,
+# Jordan Wigner Transformation
+JordanWigner,FermionicLadder
 
 include("PauliModule/Pauli.jl")
 include("PauliModule/PauliAlg.jl")
@@ -25,6 +27,7 @@ include("PauliModule/Paulimeasure.jl")
 include("PauliModule/PauliArith.jl")
 include("PauliModule/PauliLA.jl")
 include("PauliGroup/FindBasis.jl")
+include("Transformation/JordanWigner.jl")
 
 end # module PauliAlgebras
 

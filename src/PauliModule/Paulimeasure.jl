@@ -1,4 +1,4 @@
-function bitexpect(bits::T, pauli::String)::Int where T<:DitStr
+function bitexpect(bits::T, pauli::String)::Int8 where T<:DitStr
 
     if any(c -> c != 'I' && c != 'Z', pauli)
         @warn "pauli串中包含非I、Z的元素，返回0"
@@ -9,13 +9,11 @@ function bitexpect(bits::T, pauli::String)::Int where T<:DitStr
     parity = false
     @inbounds for i in eachindex(pauli)
         if pauli[i] == 'Z' && bits[i] == 1
-            # println(parity)
-            # println(pauli[i])
             parity = !parity
         end
     end
 
-    return ifelse(parity, -1, 1)
+    return ifelse(parity, Int8(-1), Int8(1))
 end
 
 bitexpect(bits::T, pauli::Pauli) where T<:DitStr = bitexpect(bits, pauli.name)
@@ -28,6 +26,10 @@ end
 
 function expect_pauli_algebra(Hamiltonian::PauliAlgebra, state)
     hamil_yao = sum(Hamiltonian.terms) do (pauli, coeff)
+        if abs(coeff.im) > 5e-7
+            @warn "Aborting imaginary part of coefficient $coeff"
+        end
+        coeff = coeff.re
         to_yao(pauli) * coeff
     end
     return expect(hamil_yao, state)

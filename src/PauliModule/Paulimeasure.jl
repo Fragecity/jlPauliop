@@ -35,4 +35,9 @@ function expect_pauli_algebra(Hamiltonian::PauliAlgebra, state)
     return expect(hamil_yao, state)
 end
 
-
+function expect_pauli_algebra_trace(Hamiltonian::PauliAlgebra, psi)
+    hamil_yao = sum(Hamiltonian.terms) do (pauli, coeff)
+        to_yao(pauli) * coeff
+    end
+    return tr(mat(hamil_yao) * state(density_matrix(psi)))
+end   

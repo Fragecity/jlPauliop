@@ -69,13 +69,13 @@ function tomography(M::AbstractMatrix{<:Number})
 end
 
 
-function rand_pauli_algebra(nqubits::Int, real = false)
-    type = real ? Float32 : ComplexF32
-    coeff = rand(type, 4^nqubits-1)
-    terms_itr = product(repeated(['I', 'X', 'Y', 'Z'], nqubits)...) 
-    terms = (join(t) for t in terms_itr if join(t) != repeat('I', nqubits))
-    return PauliAlgebra(Dict{String, ComplexF32}(zip(terms, coeff)))
-end
+# function rand_pauli_algebra(nqubits::Int, real = false)
+#     type = real ? Float32 : ComplexF32
+#     coeff = rand(type, 4^nqubits-1)
+#     terms_itr = product(repeated(['I', 'X', 'Y', 'Z'], nqubits)...) 
+#     terms = (join(t) for t in terms_itr if join(t) != repeat('I', nqubits))
+#     return PauliAlgebra(Dict{String, ComplexF32}(zip(terms, coeff)))
+# end
 
 
 

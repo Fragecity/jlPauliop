@@ -109,3 +109,61 @@ function Base.:+(pauli1::PauliAlgebra, pauli2::PauliAlgebra)
 
 	return PauliAlgebra(nqubits, terms, bvecs_dict)
 end
+
+
+function Base.:+(pauli1::Pauli, pauli2::PauliAlgebra)
+	nqubits = length(pauli1.name)
+	@assert nqubits == pauli2.nqubits "两个Pauli的qubit数量不一致"
+	
+	terms = copy(pauli2.terms)
+	bvecs_dict = copy(pauli2.bvecs_dict)
+	
+	# 将Pauli添加到PauliAlgebra中
+	if haskey(terms, pauli1.name)
+		terms[pauli1.name] += ComplexF32(1.0)
+	else
+		terms[pauli1.name] = ComplexF32(1.0)
+		bvecs_dict[pauli1.name] = pauli1.bvec
+	end
+
+	return PauliAlgebra(nqubits, terms, bvecs_dict)
+end
+
+function Base.:+(pauli1::PauliAlgebra, pauli2::Pauli)
+	nqubits = pauli1.nqubits
+	@assert nqubits == length(pauli2.name) "两个Pauli的qubit数量不一致"
+	
+	terms = copy(pauli1.terms)
+	bvecs_dict = copy(pauli1.bvecs_dict)
+	
+	# 将Pauli添加到PauliAlgebra中
+	if haskey(terms, pauli2.name)
+		terms[pauli2.name] += ComplexF32(1.0)
+	else
+		terms[pauli2.name] = ComplexF32(1.0)
+		bvecs_dict[pauli2.name] = pauli2.bvec
+	end
+
+	return PauliAlgebra(nqubits, terms, bvecs_dict)
+end
+
+function Base.:+(pauli1::Pauli, pauli2::Pauli)
+    nqubits = length(pauli1.name)
+    @assert nqubits == length(pauli2.name) "两个Pauli的qubit数量不一致"
+
+	terms = Dict{String, ComplexF32}()
+	bvecs_dict = Dict{String, BitVector}()
+	
+	# 将第一个Pauli添加到字典中
+	terms[pauli1.name] = ComplexF32(1.0)
+	bvecs_dict[pauli1.name] = pauli1.bvec
+	
+	# 将第二个Pauli添加到字典中
+	if haskey(terms, pauli2.name)
+		terms[pauli2.name] += ComplexF32(1.0)
+	else
+		terms[pauli2.name] = ComplexF32(1.0)
+		bvecs_dict[pauli2.name] = pauli2.bvec
+	end
+	return PauliAlgebra(nqubits, terms, bvecs_dict)
+end
